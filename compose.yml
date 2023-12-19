@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  oncall-uwsgi:
+    container_name: oncall-uwsgi
+    command: sh -c "uwsgi --ini uwsgi.ini"
+    env_file: grafana-oncall.env
+    deploy:
+      restart_policy:
+        condition: always
+        delay: 5s
+    image: grafana/oncall:latest
+    # depends_on:
+    #   - grafana-oncall-migrate
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "false"
+    volumes:
+      - "oncall_data:/var/lib/oncall"
+
+volumes:
+  oncall_data:
+    driver: local
+
+networks:
+  default:
+    external: true
+    name: $NETWORK
